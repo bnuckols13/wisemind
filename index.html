@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wise Mind Balance - DBT & RO-DBT Interactive Map</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-teal: #5EEAD4;
+            --deep-teal: #14B8A6;
+            --soft-purple: #C084FC;
+            --warm-rose: #FDA4AF;
+            --calm-blue: #93C5FD;
+            --sage-green: #87A878;
+            --midnight: #1E293B;
+            --slate: #475569;
+            --warm-gray: #6B6B6B;
+            --pearl: #F8FAFC;
+            --cream: #FFF8E7;
+            --gradient-calm: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-nature: linear-gradient(135deg, #5EEAD4 0%, #93C5FD 100%);
+            --gradient-warm: linear-gradient(135deg, #FDA4AF 0%, #C084FC 100%);
+            --gradient-earth: linear-gradient(135deg, #87A878 0%, #7BA7BC 100%);
+            --overcontrol-gradient: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+            --undercontrol-gradient: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
+            --wise-mind-gradient: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            min-height: 100vh;
+            color: var(--midnight);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Floating background elements */
+        .bg-circle {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.3;
+            animation: float 20s infinite ease-in-out;
+            pointer-events: none;
+        }
+
+        .bg-circle1 {
+            width: 300px;
+            height: 300px;
+            background: var(--primary-teal);
+            top: -100px;
+            right: -100px;
+        }
+
+        .bg-circle2 {
+            width: 400px;
+            height: 400px;
+            background: var(--soft-purple);
+            bottom: -150px;
+            left: -150px;
+            animation-delay: -5s;
+        }
+
+        .bg-circle3 {
+            width: 250px;
+            height: 250px;
+            background: var(--warm-rose);
+            top: 50%;
+            right: 10%;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: slideDown 0.8s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: var(--gradient-calm);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+
+        .subtitle {
+            color: var(--warm-gray);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        /* Navigation Pills */
+        .nav-pills {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-pill {
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            background: white;
+            border: 2px solid transparent;
+            color: var(--slate);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .nav-pill:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+        }
+
+        .nav-pill.active {
+            background: var(--gradient-nature);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-nature);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.12);
+        }
+
+        .card h2 {
+            color: var(--midnight);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-nature);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Mind States Visualization */
+        .mind-states-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 3rem 0;
+            position: relative;
+            min-height: 400px;
+        }
+
+        .mind-circle {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: absolute;
+            text-align: center;
+            padding: 1rem;
+            opacity: 0.9;
+        }
+
+        .rational-mind {
+            background: var(--overcontrol-gradient);
+            left: -50px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        .emotional-mind {
+            background: var(--undercontrol-gradient);
+            right: -50px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        .wise-mind {
+            background: var(--wise-mind-gradient);
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            width: 180px;
+            height: 180px;
+            border: 4px solid white;
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+        }
+
+        .wise-mind::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border-radius: 50%;
+            border: 2px solid rgba(16, 185, 129, 0.3);
+            animation: pulse-ring 3s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .mind-circle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 4;
+        }
+
+        .rational-mind:hover {
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .emotional-mind:hover {
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .wise-mind:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .mind-circle.active {
+            z-index: 5;
+        }
+
+        .rational-mind.active {
+            transform: translateY(-50%) scale(1.15);
+        }
+
+        .emotional-mind.active {
+            transform: translateY(-50%) scale(1.15);
+        }
+
+        .wise-mind.active {
+            transform: translate(-50%, -50%) scale(1.15);
+        }
+
+        /* Control Balance Slider */
+        .control-balance {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .balance-slider {
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(to right, var(--overcontrol-gradient), transparent, var(--undercontrol-gradient));
+            border-radius: 30px;
+            position: relative;
+            margin: 2rem 0;
+        }
+
+        .balance-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: var(--wise-mind-gradient);
+            border-radius: 50%;
+            color: white;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .balance-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+
+        .balance-label {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .overcontrol-label {
+            background: var(--overcontrol-gradient);
+        }
+
+        .undercontrol-label {
+            background: var(--undercontrol-gradient);
+        }
+
+        /* Mindfulness Skills Grid */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .skill-card {
+            background: linear-gradient(135deg, rgba(94, 234, 212, 0.1) 0%, rgba(147, 197, 253, 0.1) 100%);
+            padding: 2rem;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .skill-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-teal);
+            background: linear-gradient(135deg, rgba(94, 234, 212, 0.15) 0%, rgba(147, 197, 253, 0.15) 100%);
+        }
+
+        .skill-card.active {
+            border-color: var(--deep-teal);
+            background: linear-gradient(135deg, rgba(94, 234, 212, 0.2) 0%, rgba(147, 197, 253, 0.2) 100%);
+        }
+
+        .skill-card h3 {
+            color: var(--deep-teal);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .skill-card p {
+            color: var(--slate);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        /* Assessment Tools */
+        .assessment-container {
+            background: linear-gradient(135deg, rgba(253, 164, 175, 0.1) 0%, rgba(192, 132, 252, 0.1) 100%);
+            padding: 2rem;
+            border-radius: 16px;
+            margin: 2rem 0;
+        }
+
+        .assessment-question {
+            margin-bottom: 2rem;
+        }
+
+        .assessment-question h4 {
+            color: var(--deep-teal);
+            margin-bottom: 1rem;
+        }
+
+        .response-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .response-option {
+            padding: 1rem;
+            background: white;
+            border: 2px solid rgba(94, 234, 212, 0.3);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .response-option:hover {
+            border-color: var(--primary-teal);
+            transform: translateY(-2px);
+        }
+
+        .response-option.selected {
+            border-color: var(--deep-teal);
+            background: rgba(94, 234, 212, 0.1);
+        }
+
+        /* Results Display */
+        .results-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            margin-top: 2rem;
+            border: 2px solid var(--primary-teal);
+            display: none;
+        }
+
+        .results-container.show {
+            display: block;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-item {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(94, 234, 212, 0.05) 0%, rgba(147, 197, 253, 0.05) 100%);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-item h4 {
+            color: var(--deep-teal);
+            margin-bottom: 1rem;
+        }
+
+        .result-item p {
+            color: var(--slate);
+            line-height: 1.6;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 2rem;
+            background: var(--gradient-nature);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(94, 234, 212, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(94, 234, 212, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--deep-teal);
+            border: 2px solid var(--primary-teal);
+            margin-left: 1rem;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(94, 234, 212, 0.1);
+        }
+
+        /* Practice Tools */
+        .practice-tool {
+            background: linear-gradient(135deg, rgba(147, 197, 253, 0.1) 0%, rgba(192, 132, 252, 0.1) 100%);
+            padding: 2rem;
+            border-radius: 16px;
+            margin: 1.5rem 0;
+        }
+
+        .practice-tool h4 {
+            color: var(--deep-teal);
+            margin-bottom: 1rem;
+        }
+
+        .practice-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(94, 234, 212, 0.3);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .practice-input:focus {
+            outline: none;
+            border-color: var(--primary-teal);
+            box-shadow: 0 0 0 3px rgba(94, 234, 212, 0.1);
+        }
+
+        /* Start Screen */
+        .start-screen {
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .start-options {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .start-option {
+            background: white;
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 250px;
+        }
+
+        .start-option:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        }
+
+        .start-option h3 {
+            color: var(--midnight);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .container { padding: 1rem; }
+            .card { padding: 1.5rem; }
+            .nav-pills { flex-direction: column; align-items: center; }
+            .skills-grid { grid-template-columns: 1fr; }
+            .start-options { flex-direction: column; align-items: center; }
+            
+            .mind-states-container { 
+                min-height: 500px;
+                transform: scale(0.8);
+            }
+            
+            .mind-circle {
+                width: 200px;
+                height: 200px;
+                font-size: 1rem;
+            }
+            
+            .wise-mind {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .rational-mind {
+                left: -30px;
+            }
+            
+            .emotional-mind {
+                right: -30px;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease both;
+        }
+
+        .slide-up {
+            animation: slideUp 0.6s ease both;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Background Elements -->
+    <div class="bg-circle bg-circle1"></div>
+    <div class="bg-circle bg-circle2"></div>
+    <div class="bg-circle bg-circle3"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Wise Mind Balance</h1>
+            <p class="subtitle">DBT & RO-DBT Interactive Map for Emotional Regulation</p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-pills">
+            <button class="nav-pill active" onclick="showPage('start')">
+                Start
+            </button>
+            <button class="nav-pill" onclick="showPage('learn')">
+                Learn Concepts
+            </button>
+            <button class="nav-pill" onclick="showPage('assess')">
+                Self-Assessment
+            </button>
+            <button class="nav-pill" onclick="showPage('practice')">
+                Skills Practice
+            </button>
+            <button class="nav-pill" onclick="showPage('reflect')">
+                Integration
+            </button>
+        </div>
+
+        <!-- Start Screen -->
+        <div class="page active" id="start">
+            <div class="start-screen">
+                <div class="card fade-in">
+                    <h2>Welcome to Wise Mind Balance</h2>
+                    <p style="color: var(--slate); margin: 2rem 0; line-height: 1.7; font-size: 1.1rem;">
+                        Explore the intersection of DBT's Wise Mind with RO-DBT's understanding of overcontrol and undercontrol. Find your unique path to emotional balance and effective living.
+                    </p>
+                    <div class="start-options">
+                        <div class="start-option" onclick="showPage('learn')">
+                            <div class="icon" style="margin: 0 auto 1rem;">L</div>
+                            <h3>Learn the Framework</h3>
+                            <p style="color: var(--slate);">Understand Wise Mind, mindfulness skills, and the spectrum of control.</p>
+                        </div>
+                        <div class="start-option" onclick="showPage('assess')">
+                            <div class="icon" style="margin: 0 auto 1rem;">A</div>
+                            <h3>Assess Your Patterns</h3>
+                            <p style="color: var(--slate);">Interactive tools to identify your mind states and control patterns.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Learn Concepts Page -->
+        <div class="page" id="learn">
+            <div class="card">
+                <h2>
+                    <div class="icon">M</div>
+                    The Three Mind States
+                </h2>
+                <p style="color: var(--slate); margin-bottom: 2rem; line-height: 1.7;">
+                    DBT teaches us about three states of mind. Wise Mind exists in the overlap where rational thinking and emotional wisdom meet.
+                </p>
+
+                <div class="mind-states-container">
+                    <div class="mind-circle rational-mind" onclick="selectMindState('rational')">
+                        <div>
+                            <strong>Rational Mind</strong><br>
+                            Logic • Facts • Analysis
+                        </div>
+                    </div>
+                    <div class="mind-circle emotional-mind" onclick="selectMindState('emotional')">
+                        <div>
+                            <strong>Emotional Mind</strong><br>
+                            Feelings • Urges • Intuition
+                        </div>
+                    </div>
+                    <div class="mind-circle wise-mind" onclick="selectMindState('wise')">
+                        <div>
+                            <strong>Wise Mind</strong><br>
+                            Integration • Balance • Knowing
+                        </div>
+                    </div>
+                </div>
+
+                <p style="color: var(--warm-gray); text-align: center; font-style: italic; margin-top: 1rem;">
+                    Click on each circle to explore. Notice how Wise Mind exists in the overlap—integrating both rational thinking and emotional wisdom.
+                </p>
+
+                <div id="mindStateDetails" style="margin-top: 2rem; padding: 2rem; background: rgba(255,255,255,0.7); border-radius: 16px; display: none;">
+                    <!-- Mind state details will appear here -->
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>
+                    <div class="icon">B</div>
+                    The Control Spectrum
+                </h2>
+                <p style="color: var(--slate); margin-bottom: 2rem; line-height: 1.7;">
+                    RO-DBT helps us understand that we all fall somewhere on the spectrum between overcontrol and undercontrol.
+                </p>
+
+                <div class="control-balance">
+                    <div class="balance-slider">
+                        <div class="balance-indicator" onclick="toggleBalanceInfo()">
+                            Balance
+                        </div>
+                    </div>
+                    <div class="balance-labels">
+                        <div class="balance-label overcontrol-label">Overcontrol</div>
+                        <div class="balance-label undercontrol-label">Undercontrol</div>
+                    </div>
+                </div>
+
+                <div id="balanceDetails" style="margin-top: 2rem; padding: 2rem; background: rgba(255,255,255,0.9); border-radius: 16px; display: none; border: 2px solid var(--primary-teal);">
+                    <!-- Balance details will appear here -->
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+                    <div style="background: rgba(99, 102, 241, 0.1); padding: 1.5rem; border-radius: 12px;">
+                        <h4 style="color: #4F46E5; margin-bottom: 1rem;">Overcontrol Traits</h4>
+                        <ul style="color: var(--slate); line-height: 1.8; list-style: none;">
+                            <li>• High self-control and inhibition</li>
+                            <li>• Perfectionism and rigidity</li>
+                            <li>• Difficulty expressing emotions</li>
+                            <li>• Social isolation or withdrawal</li>
+                            <li>• Strong need for structure</li>
+                        </ul>
+                    </div>
+                    <div style="background: rgba(245, 158, 11, 0.1); padding: 1.5rem; border-radius: 12px;">
+                        <h4 style="color: #D97706; margin-bottom: 1rem;">Undercontrol Traits</h4>
+                        <ul style="color: var(--slate); line-height: 1.8; list-style: none;">
+                            <li>• Impulsivity and emotional reactivity</li>
+                            <li>• Difficulty delaying gratification</li>
+                            <li>• Intense emotional expression</li>
+                            <li>• Chaotic or unpredictable patterns</li>
+                            <li>• Difficulty with structure</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>
+                    <div class="icon">S</div>
+                    Mindfulness Skills
+                </h2>
+                <p style="color: var(--slate); margin-bottom: 2rem; line-height: 1.7;">
+                    The "What" and "How" skills of mindfulness help us access Wise Mind regardless of our control style.
+                </p>
+
+                <div class="skills-grid">
+                    <div class="skill-card" onclick="selectSkill(this, 'observe')">
+                        <h3>Observe</h3>
+                        <p>Notice your thoughts, feelings, and sensations without getting caught up in them.</p>
+                        <div class="skill-practice" style="display: none;">
+                            <strong>Practice:</strong> Take a moment to notice 3 things you can see, 2 things you can hear, and 1 thing you can feel.
+                        </div>
+                    </div>
+                    <div class="skill-card" onclick="selectSkill(this, 'describe')">
+                        <h3>Describe</h3>
+                        <p>Put words to your experience without judgment or interpretation.</p>
+                        <div class="skill-practice" style="display: none;">
+                            <strong>Practice:</strong> Describe your current emotional state using only factual, observable language.
+                        </div>
+                    </div>
+                    <div class="skill-card" onclick="selectSkill(this, 'participate')">
+                        <h3>Participate</h3>
+                        <p>Fully engage in the present moment without self-consciousness.</p>
+                        <div class="skill-practice" style="display: none;">
+                            <strong>Practice:</strong> Choose an activity and do it with complete attention and engagement.
+                        </div>
+                    </div>
+                    <div class="skill-card" onclick="selectSkill(this, 'nonjudgmental')">
+                        <h3>Non-judgmentally</h3>
+                        <p>Observe without evaluating as good or bad, right or wrong.</p>
+                        <div class="skill-practice" style="display: none;">
+                            <strong>Practice:</strong> Notice when judgmental thoughts arise and gently redirect to neutral observation.
+                        </div>
+                    </div>
+                    <div class="skill-card" onclick="selectSkill(this, 'onemindfully')">
+                        <h3>One-mindfully</h3>
+                        <p>Focus on one thing at a time in the present moment.</p>
+                        <div class="skill-practice" style="display: none;">
+                            <strong>Practice:</strong> When your mind wanders, gently bring attention back to your chosen focus.
+                        </div>
+                    </div>
+                    <div class="skill-card" onclick="selectSkill(this, 'effectively')">
+                        <h3>Effectively</h3>
+                        <p>Focus on what works rather than what's "right" or how you feel.</p>
+                        <div class="skill-practice" style="display: none;">
+                            <strong>Practice:</strong> Ask "What's the most effective thing I can do right now?" and act on it.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Self-Assessment Page -->
+        <div class="page" id="assess">
+            <div class="card">
+                <h2>
+                    <div class="icon">A</div>
+                    Mind State & Control Pattern Assessment
+                </h2>
+                <p style="color: var(--slate); margin-bottom: 2rem; line-height: 1.7;">
+                    Explore your current patterns and tendencies. Remember, there are no "right" answers—only awareness.
+                </p>
+
+                <div class="assessment-container">
+                    <div class="assessment-question">
+                        <h4>When faced with a difficult decision, I typically:</h4>
+                        <div class="response-options">
+                            <div class="response-option" onclick="selectResponse(this, 'rational', 1)" data-type="rational">
+                                Analyze all options thoroughly and make a logical choice
+                            </div>
+                            <div class="response-option" onclick="selectResponse(this, 'emotional', 1)" data-type="emotional">
+                                Go with my gut feeling or what feels right
+                            </div>
+                            <div class="response-option" onclick="selectResponse(this, 'wise', 1)" data-type="wise">
+                                Consider both logic and intuition to find what works
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="assessment-question">
+                        <h4>In stressful situations, I tend to:</h4>
+                        <div class="response-options">
+                            <div class="response-option" onclick="selectResponse(this, 'overcontrol', 2)" data-type="overcontrol">
+                                Become more rigid and try to control everything
+                            </div>
+                            <div class="response-option" onclick="selectResponse(this, 'undercontrol', 2)" data-type="undercontrol">
+                                Feel overwhelmed and act impulsively
+                            </div>
+                            <div class="response-option" onclick="selectResponse(this, 'balanced', 2)" data-type="balanced">
+                                Stay flexible while maintaining some structure
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="assessment-question">
+                        <h4>My relationship with emotions is:</h4>
+                        <div class="response-options">
+                            <div class="response-option" onclick="selectResponse(this, 'overcontrol', 3)" data-type="overcontrol">
+                                I try to keep emotions under control and private
+                            </div>
+                            <div class="response-option" onclick="selectResponse(this, 'undercontrol', 3)" data-type="undercontrol">
+                                I feel emotions intensely and express them openly
+                            </div>
+                            <div class="response-option" onclick="selectResponse(this, 'balanced', 3)" data-type="balanced">
+                                I feel emotions fully while choosing how to express them
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="assessment-question">
+                        <h4>When it comes to structure and routine:</h4>
+                        <div class="response-options">
+                            <div class="response-option" onclick="selectResponse(this, 'overcontrol', 4)" data-type="overcontrol">
+                                I need detailed plans and get anxious without them
+                            </div>
+                            <div class="response-option" onclick="selectResponse(this, 'undercontrol', 4)" data-type="undercontrol">
+                                I prefer flexibility and spontaneity over rigid schedules
+                            </div>
+                            <div class="response-option" onclick="selectResponse(this, 'balanced', 4)" data-type="balanced">
+                                I like some structure but can adapt when needed
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button class="btn" onclick="generateAssessment()">Generate My Pattern</button>
+                        <button class="btn btn-secondary" onclick="resetAssessment()">Reset</button>
+                    </div>
+
+                    <div id="assessmentResults" class="results-container">
+                        <!-- Results will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Skills Practice Page -->
+        <div class="page" id="practice">
+            <div class="card">
+                <h2>
+                    <div class="icon">P</div>
+                    Interactive Skills Practice
+                </h2>
+                <p style="color: var(--slate); margin-bottom: 2rem; line-height: 1.7;">
+                    Practice integrating mindfulness skills with awareness of your control patterns.
+                </p>
+
+                <div class="practice-tool">
+                    <h4>Wise Mind Check-In</h4>
+                    <p style="color: var(--slate); margin-bottom: 1rem;">Take a moment to check in with yourself. What is your Rational Mind noticing? What is your Emotional Mind saying? What does your Wise Mind know?</p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin: 1rem 0;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: #4F46E5; font-weight: 600;">Rational Mind says:</label>
+                            <textarea class="practice-input" placeholder="Facts, logic, analysis..."></textarea>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: #D97706; font-weight: 600;">Emotional Mind says:</label>
+                            <textarea class="practice-input" placeholder="Feelings, urges, intuition..."></textarea>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: #059669; font-weight: 600;">Wise Mind knows:</label>
+                            <textarea class="practice-input" placeholder="Integration, balance, truth..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="practice-tool">
+                    <h4>Control Pattern Awareness</h4>
+                    <p style="color: var(--slate); margin-bottom: 1rem;">Notice if you're leaning toward overcontrol or undercontrol right now. What would balance look like?</p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--midnight); font-weight: 600;">Current pattern I notice:</label>
+                            <textarea class="practice-input" placeholder="Am I being rigid or chaotic? Controlling or impulsive?"></textarea>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--midnight); font-weight: 600;">What balance might look like:</label>
+                            <textarea class="practice-input" placeholder="How can I be flexible yet structured?"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="practice-tool">
+                    <h4>Mindful Response Planning</h4>
+                    <p style="color: var(--slate); margin-bottom: 1rem;">Think of a current challenge. How can you respond from Wise Mind using mindfulness skills?</p>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; color: var(--midnight); font-weight: 600;">The situation:</label>
+                        <textarea class="practice-input" placeholder="Describe the challenge you're facing..."></textarea>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: var(--midnight); font-weight: 600;">My Wise Mind response:</label>
+                        <textarea class="practice-input" placeholder="What would be most effective? What skills can I use?"></textarea>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button class="btn" onclick="savePractice()">Save Practice Session</button>
+                    <button class="btn btn-secondary" onclick="clearPractice()">Clear All</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Integration Page -->
+        <div class="page" id="reflect">
+            <div class="card">
+                <h2>
+                    <div class="icon">I</div>
+                    Integration & Reflection
+                </h2>
+                <p style="color: var(--slate); margin-bottom: 2rem; line-height: 1.7;">
+                    Reflect on your patterns and create personalized strategies for accessing Wise Mind balance.
+                </p>
+
+                <div class="practice-tool">
+                    <h4>My Control Pattern Insights</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--midnight); font-weight: 600;">When I lean toward overcontrol, I notice:</label>
+                            <textarea class="practice-input" placeholder="Rigidity, perfectionism, emotional suppression..."></textarea>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--midnight); font-weight: 600;">When I lean toward undercontrol, I notice:</label>
+                            <textarea class="practice-input" placeholder="Impulsivity, emotional reactivity, chaos..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="practice-tool">
+                    <h4>My Wise Mind Access Points</h4>
+                    <p style="color: var(--slate); margin-bottom: 1rem;">What helps you access your Wise Mind? When do you feel most balanced?</p>
+                    <textarea class="practice-input" placeholder="Times, places, practices, or conditions that help me access Wise Mind..."></textarea>
+                </div>
+
+                <div class="practice-tool">
+                    <h4>Personal Skills Toolkit</h4>
+                    <p style="color: var(--slate); margin-bottom: 1rem;">Based on your patterns, which mindfulness skills are most helpful for you?</p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--midnight); font-weight: 600;">Skills for when I'm overcontrolling:</label>
+                            <textarea class="practice-input" placeholder="Participate, observe emotions, practice flexibility..."></textarea>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--midnight); font-weight: 600;">Skills for when I'm undercontrolling:</label>
+                            <textarea class="practice-input" placeholder="One-mindfully, describe, pause before acting..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="practice-tool">
+                    <h4>Daily Practice Commitment</h4>
+                    <p style="color: var(--slate); margin-bottom: 1rem;">What small, sustainable practice will you commit to for building Wise Mind awareness?</p>
+                    <textarea class="practice-input" placeholder="My daily commitment to Wise Mind practice..."></textarea>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button class="btn" onclick="generateIntegration()">Create My Integration Plan</button>
+                    <button class="btn btn-secondary" onclick="exportPlan()">Export Plan</button>
+                </div>
+
+                <div id="integrationResults" class="results-container">
+                    <!-- Integration plan will appear here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Page navigation
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.nav-pill').forEach(pill => pill.classList.remove('active'));
+            
+            document.getElementById(pageId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Mind state selection
+        function selectMindState(state) {
+            document.querySelectorAll('.mind-circle').forEach(circle => {
+                circle.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            const detailsDiv = document.getElementById('mindStateDetails');
+            detailsDiv.style.display = 'block';
+            
+            const stateInfo = {
+                rational: {
+                    title: "Rational Mind",
+                    content: `
+                        <h3 style="color: #4F46E5; margin-bottom: 1rem;">Rational Mind Characteristics</h3>
+                        <ul style="color: var(--slate); line-height: 1.8; margin-bottom: 1.5rem;">
+                            <li>• Focuses on facts, logic, and reason</li>
+                            <li>• Makes decisions based on evidence and analysis</li>
+                            <li>• Can be cool, detached, and planning-oriented</li>
+                            <li>• Helpful for problem-solving and goal-setting</li>
+                            <li>• May miss important emotional information</li>
+                        </ul>
+                        <p style="color: var(--slate); font-style: italic;">
+                            <strong>Balance note:</strong> Pure rational mind can lead to overcontrol—being too rigid or disconnected from feelings.
+                        </p>
+                    `
+                },
+                emotional: {
+                    title: "Emotional Mind",
+                    content: `
+                        <h3 style="color: #D97706; margin-bottom: 1rem;">Emotional Mind Characteristics</h3>
+                        <ul style="color: var(--slate); line-height: 1.8; margin-bottom: 1.5rem;">
+                            <li>• Driven by feelings, moods, and urges</li>
+                            <li>• Makes decisions based on how things feel</li>
+                            <li>• Can be passionate, creative, and intuitive</li>
+                            <li>• Provides important information about values and needs</li>
+                            <li>• May lead to impulsive or reactive choices</li>
+                        </ul>
+                        <p style="color: var(--slate); font-style: italic;">
+                            <strong>Balance note:</strong> Pure emotional mind can lead to undercontrol—being too reactive or chaotic.
+                        </p>
+                    `
+                },
+                wise: {
+                    title: "Wise Mind",
+                    content: `
+                        <h3 style="color: #059669; margin-bottom: 1rem;">Wise Mind - The Integration Zone</h3>
+                        <ul style="color: var(--slate); line-height: 1.8; margin-bottom: 1.5rem;">
+                            <li>• Lives in the overlap between rational and emotional mind</li>
+                            <li>• Integrates both logical thinking and emotional wisdom</li>
+                            <li>• Knows what feels right and makes sense simultaneously</li>
+                            <li>• Accesses deep wisdom and intuitive knowing</li>
+                            <li>• Considers both effectiveness and personal values</li>
+                            <li>• Leads to balanced, thoughtful responses</li>
+                        </ul>
+                        <p style="color: var(--slate); font-style: italic;">
+                            <strong>Balance note:</strong> Wise Mind naturally balances control—being flexible yet grounded, responsive yet thoughtful. It's not about perfection, but integration.
+                        </p>
+                    `
+                }
+            };
+            
+            detailsDiv.innerHTML = stateInfo[state].content;
+        }
+
+        // Skills selection
+        function selectSkill(element, skill) {
+            const wasActive = element.classList.contains('active');
+            document.querySelectorAll('.skill-card').forEach(card => {
+                card.classList.remove('active');
+                const practice = card.querySelector('.skill-practice');
+                if (practice) practice.style.display = 'none';
+            });
+            
+            if (!wasActive) {
+                element.classList.add('active');
+                const practice = element.querySelector('.skill-practice');
+                if (practice) practice.style.display = 'block';
+            }
+        }
+
+        // Assessment functionality
+        let assessmentResponses = {};
+
+        function selectResponse(element, type, questionNum) {
+            // Clear other selections in this question
+            const siblings = element.parentElement.children;
+            Array.from(siblings).forEach(sibling => {
+                sibling.classList.remove('selected');
+            });
+            
+            element.classList.add('selected');
+            assessmentResponses[questionNum] = type;
+        }
+
+        function generateAssessment() {
+            if (Object.keys(assessmentResponses).length < 4) {
+                alert('Please answer all questions to generate your pattern assessment.');
+                return;
+            }
+            
+            // Count responses
+            const counts = {};
+            Object.values(assessmentResponses).forEach(response => {
+                counts[response] = (counts[response] || 0) + 1;
+            });
+            
+            const resultsDiv = document.getElementById('assessmentResults');
+            let primaryPattern = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+            
+            let resultsHTML = '<h3 style="color: var(--deep-teal); margin-bottom: 1.5rem;">Your Pattern Assessment</h3>';
+            
+            // Determine primary patterns
+            if (counts.overcontrol >= 2) {
+                resultsHTML += `
+                    <div class="result-item">
+                        <h4>Primary Pattern: Overcontrol Tendency</h4>
+                        <p>You tend toward higher self-control, which can be both a strength and a challenge. Your structured approach helps you achieve goals, but you might benefit from practicing flexibility and emotional expression.</p>
+                        <p><strong>Helpful skills:</strong> Participate, observe emotions non-judgmentally, practice "good enough" rather than perfect.</p>
+                    </div>
+                `;
+            }
+            
+            if (counts.undercontrol >= 2) {
+                resultsHTML += `
+                    <div class="result-item">
+                        <h4>Primary Pattern: Undercontrol Tendency</h4>
+                        <p>You tend toward emotional expressiveness and flexibility, which brings vitality and authenticity. You might benefit from practices that help with structure and pause between feeling and acting.</p>
+                        <p><strong>Helpful skills:</strong> One-mindfully, describe before reacting, practice pausing and breathing.</p>
+                    </div>
+                `;
+            }
+            
+            if (counts.rational >= 2) {
+                resultsHTML += `
+                    <div class="result-item">
+                        <h4>Mind State Tendency: Rational Mind</h4>
+                        <p>You often rely on logic and analysis, which provides clarity and good problem-solving. Consider also tuning into your emotional wisdom for a fuller picture.</p>
+                        <p><strong>Practice:</strong> Regular check-ins with "What am I feeling right now?" and "What do my emotions know?"</p>
+                    </div>
+                `;
+            }
+            
+            if (counts.emotional >= 2) {
+                resultsHTML += `
+                    <div class="result-item">
+                        <h4>Mind State Tendency: Emotional Mind</h4>
+                        <p>You tune into feelings and intuition naturally, which provides valuable information about what matters to you. Consider also engaging your rational mind for balance.</p>
+                        <p><strong>Practice:</strong> Ask "What are the facts here?" and "What would be most effective?"</p>
+                    </div>
+                `;
+            }
+            
+            if (counts.wise >= 2 || counts.balanced >= 2) {
+                resultsHTML += `
+                    <div class="result-item">
+                        <h4>Balanced Pattern: Wise Mind Access</h4>
+                        <p>You show a natural tendency toward integration and balance. This is a strength that can be further developed through regular mindfulness practice.</p>
+                        <p><strong>Continue practicing:</strong> Regular Wise Mind check-ins and mindful awareness of both thoughts and feelings.</p>
+                    </div>
+                `;
+            }
+            
+            resultsHTML += `
+                <div style="margin-top: 2rem; padding: 1rem; background: var(--gradient-nature); color: white; border-radius: 8px; text-align: center;">
+                    <p style="margin: 0; font-weight: 600;">Remember: All patterns have strengths. The goal is awareness and flexibility, not changing who you are.</p>
+                </div>
+            `;
+            
+            resultsDiv.innerHTML = resultsHTML;
+            resultsDiv.classList.add('show');
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function resetAssessment() {
+            assessmentResponses = {};
+            document.querySelectorAll('.response-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.getElementById('assessmentResults').classList.remove('show');
+        }
+
+        // Practice tools
+        function savePractice() {
+            const practiceData = {};
+            document.querySelectorAll('.practice-input').forEach((input, index) => {
+                if (input.value.trim()) {
+                    practiceData[`input_${index}`] = input.value;
+                }
+            });
+            
+            localStorage.setItem('wiseMindPractice', JSON.stringify(practiceData));
+            alert('Practice session saved! You can continue building your awareness.');
+        }
+
+        function clearPractice() {
+            if (confirm('This will clear all your practice entries. Are you sure?')) {
+                document.querySelectorAll('.practice-input').forEach(input => {
+                    input.value = '';
+                });
+            }
+        }
+
+        // Integration tools
+        function generateIntegration() {
+            const inputs = document.querySelectorAll('#reflect .practice-input');
+            let hasContent = false;
+            
+            inputs.forEach(input => {
+                if (input.value.trim()) hasContent = true;
+            });
+            
+            if (!hasContent) {
+                alert('Please fill in some reflection areas to generate your integration plan.');
+                return;
+            }
+            
+            const resultsDiv = document.getElementById('integrationResults');
+            let planHTML = '<h3 style="color: var(--deep-teal); margin-bottom: 1.5rem;">Your Personal Integration Plan</h3>';
+            
+            const sections = [
+                { title: 'Overcontrol Awareness', inputs: [inputs[0]] },
+                { title: 'Undercontrol Awareness', inputs: [inputs[1]] },
+                { title: 'Wise Mind Access Points', inputs: [inputs[2]] },
+                { title: 'Personalized Skills Toolkit', inputs: [inputs[3], inputs[4]] },
+                { title: 'Daily Practice', inputs: [inputs[5]] }
+            ];
+            
+            sections.forEach((section, index) => {
+                const content = section.inputs.map(input => input?.value?.trim()).filter(Boolean);
+                if (content.length > 0) {
+                    planHTML += `
+                        <div class="result-item">
+                            <h4>${section.title}</h4>
+                            ${content.map(text => `<p>${text}</p>`).join('')}
+                        </div>
+                    `;
+                }
+            });
+            
+            planHTML += `
+                <div style="margin-top: 2rem; padding: 1rem; background: var(--wise-mind-gradient); color: white; border-radius: 8px;">
+                    <p style="margin: 0; font-weight: 600;">Your journey to Wise Mind balance is unique. Use this plan as a guide, and remember that small, consistent practices create lasting change.</p>
+                </div>
+            `;
+            
+            resultsDiv.innerHTML = planHTML;
+            resultsDiv.classList.add('show');
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function exportPlan() {
+            const resultsDiv = document.getElementById('integrationResults');
+            if (!resultsDiv.classList.contains('show')) {
+                alert('Please generate your integration plan first.');
+                return;
+            }
+            
+            // Simple export functionality
+            const content = resultsDiv.textContent;
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'wise-mind-integration-plan.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Balance slider interaction
+        function toggleBalanceInfo() {
+            const balanceDetails = document.getElementById('balanceDetails');
+            const indicator = document.querySelector('.balance-indicator');
+            
+            if (balanceDetails.style.display === 'none' || !balanceDetails.style.display) {
+                balanceDetails.style.display = 'block';
+                balanceDetails.innerHTML = `
+                    <h3 style="color: var(--deep-teal); margin-bottom: 1.5rem; text-align: center;">The Art of Dynamic Balance</h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%); padding: 1.5rem; border-radius: 12px;">
+                            <h4 style="color: #059669; margin-bottom: 1rem;">Creative Flow & Structure</h4>
+                            <p style="color: var(--slate); line-height: 1.6;">
+                                Balance means honoring your creative impulses and intuitive knowing while maintaining enough focus and clarity to bring your visions into reality. It's the dance between inspiration and implementation.
+                            </p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%); padding: 1.5rem; border-radius: 12px;">
+                            <h4 style="color: #059669; margin-bottom: 1rem;">Flexible Boundaries</h4>
+                            <p style="color: var(--slate); line-height: 1.6;">
+                                True balance isn't rigid—it's responsive. Sometimes you lean into structure and planning; other times you trust your instincts and flow. The key is conscious choice rather than automatic reaction.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, rgba(94, 234, 212, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%); padding: 2rem; border-radius: 12px; text-align: center;">
+                        <h4 style="color: var(--deep-teal); margin-bottom: 1rem;">What Balance Feels Like</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+                            <div style="color: var(--slate);">
+                                <strong>Emotionally:</strong><br>
+                                Calm yet alive, grounded yet open
+                            </div>
+                            <div style="color: var(--slate);">
+                                <strong>Mentally:</strong><br>
+                                Clear thinking with intuitive knowing
+                            </div>
+                            <div style="color: var(--slate);">
+                                <strong>Behaviorally:</strong><br>
+                                Purposeful action with natural flow
+                            </div>
+                            <div style="color: var(--slate);">
+                                <strong>Relationally:</strong><br>
+                                Connected to others and yourself
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 1.5rem; color: var(--warm-gray); font-style: italic;">
+                        <p>Balance is not a destination but a dynamic process—like riding a bicycle, it's found in the movement, not in standing still.</p>
+                    </div>
+                `;
+                indicator.style.transform = 'translate(-50%, -50%) scale(1.1)';
+                indicator.style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.4)';
+                balanceDetails.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+                balanceDetails.style.display = 'none';
+                indicator.style.transform = 'translate(-50%, -50%) scale(1)';
+                indicator.style.boxShadow = 'none';
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add entrance animations to cards
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('fade-in');
+            });
+        });
+    </script>
+</body>
+</html>
